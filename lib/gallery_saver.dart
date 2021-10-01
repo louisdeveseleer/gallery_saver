@@ -29,7 +29,8 @@ class GallerySaver {
       throw ArgumentError(pleaseProvidePath);
     }
     if (!isVideo(path)) {
-      throw ArgumentError(fileIsNotVideo);
+      print('Is not a video');
+      // throw ArgumentError(fileIsNotVideo);
     }
     if (!isLocalFilePath(path)) {
       tempFile = await _downloadFile(path);
