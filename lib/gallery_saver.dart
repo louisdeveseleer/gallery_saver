@@ -57,7 +57,8 @@ class GallerySaver {
       throw ArgumentError(pleaseProvidePath);
     }
     if (!isImage(path)) {
-      throw ArgumentError(fileIsNotImage);
+      print('Is not an image');
+      // throw ArgumentError(fileIsNotImage);
     }
     if (!isLocalFilePath(path)) {
       tempFile = await _downloadFile(path);
@@ -75,7 +76,8 @@ class GallerySaver {
     return result;
   }
 
-  static Future<File> _downloadFile(String url, {Map<String, String>? headers}) async {
+  static Future<File> _downloadFile(String url,
+      {Map<String, String>? headers}) async {
     print(url);
     http.Client _client = new http.Client();
     var req = await _client.get(Uri.parse(url), headers: headers);
