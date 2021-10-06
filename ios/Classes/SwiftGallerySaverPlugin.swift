@@ -41,10 +41,26 @@ public class SwiftGallerySaverPlugin: NSObject, FlutterPlugin {
         let path = args![self.path] as! String
         let albumName = args![self.albumName] as? String
         
-        let status = PHPhotoLibrary.authorizationStatus()
+    //     let status = PHPhotoLibrary.authorizationStatus()
+    //     if status == .notDetermined {
+    //         PHPhotoLibrary.requestAuthorization({status in
+    //             if status == .authorized{
+    //                 self._saveMediaToAlbum(path, mediaType, albumName, result)
+    //             } else {
+    //                 result(false);
+    //             }
+    //         })
+    //     } else if status == .authorized {
+    //         self._saveMediaToAlbum(path, mediaType, albumName, result)
+    //     } else {
+    //         result(false);
+    //     }
+    // }
+    
+     let status = _getGalleryAuthorizationStatus()
         if status == .notDetermined {
-            PHPhotoLibrary.requestAuthorization({status in
-                if status == .authorized{
+            _requestGalleryAuthorization({status in
+                if status == .authorized {
                     self._saveMediaToAlbum(path, mediaType, albumName, result)
                 } else {
                     result(false);
@@ -56,6 +72,23 @@ public class SwiftGallerySaverPlugin: NSObject, FlutterPlugin {
             result(false);
         }
     }
+
+    private func _getGalleryAuthorizationStatus() -> PHAuthorizationStatus {
+        if #available(iOS 14, *) {
+            return PHPhotoLibrary.authorizationStatus(for: .addOnly)
+        } else {
+            return PHPhotoLibrary.authorizationStatus()
+        }
+    }
+
+    private func _requestGalleryAuthorization(handler: @escaping (PHAuthorizationStatus) -> Void) {
+        if #available(iOS 14, *) {
+            PHPhotoLibrary.requestAuthorization(for: .addOnly, handler: handler)
+        } else {
+            PHPhotoLibrary.requestAuthorization(handler)
+        }
+    }
+
     
     private func _saveMediaToAlbum(_ imagePath: String, _ mediaType: MediaType, _ albumName: String?,
                                    _ flutterResult: @escaping FlutterResult) {
